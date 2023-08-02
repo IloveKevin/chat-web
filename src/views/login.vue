@@ -47,7 +47,7 @@
 <script>
 import { login, register } from '../network/http';
 import { mapState, mapMutations } from 'vuex';
-import routerName from '@/common/router-name';
+import websocketInstance from '@/network/websocket';
 export default {
     name: 'login-1',
     components: {
@@ -93,7 +93,7 @@ export default {
                     refresh: res.refreshToken
                 }
                 this.setToken(token);
-                this.$router.push({ name: routerName.HOME });
+                websocketInstance.init();
             });
         },
         toRegister() {

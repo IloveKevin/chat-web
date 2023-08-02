@@ -7,7 +7,7 @@ const loginVerify = (to, from, next) => {
         return
     }
     if (to.meta.needLogin) {
-        if (getToken().login) {
+        if (token.login) {
             next()
             return
         } else {

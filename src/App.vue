@@ -5,8 +5,16 @@
 </template>
 
 <script>
+import websocketInstance from './network/websocket';
+import { getToken } from './local';
 export default {
   name: 'App',
+  created() {
+    let token = getToken();
+    if (token) {
+      websocketInstance.init();
+    }
+  }
 }
 </script>
 <style></style>
