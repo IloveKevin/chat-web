@@ -6,10 +6,7 @@ import router from "@/router";
 export default ws => {
     ws.event.on(code.checkUser.code, (message) => {
         if (message.state === code.checkUser.state.fail) {
-            ws.close();
             removeToken();
-            if (router.currentRoute.name !== routerName.LOGIN)
-                router.push({ name: routerName.LOGIN });
             return;
         }
         if (router.currentRoute.name === routerName.LOGIN)

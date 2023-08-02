@@ -1,15 +1,18 @@
-import heartPing from "./heart-ping";
 import eventListeners from "@/eventListeners/eventListeners";
 import checkUser from "./check-user";
-import { getToken } from "@/local";
+import { getToken, removeToken } from "@/local";
 import code from "@/common/code";
+import router from "@/router";
+import routerName from "@/common/router-name";
 
 const websocketInstance = {
     state: 'close',
     ws: null,
     event: new eventListeners(),
     timer: null,
+    heartTimeer: null,
     init() {
+        console.log('连接websocket服务器');
         this.ws = new WebSocket("ws://localhost:8080");
         this.ws.onopen = () => {
             this.state = 'open';
@@ -28,15 +31,28 @@ const websocketInstance = {
             this.event.emit(data.code, data);
         }
         this.ws.onclose = (event) => {
+            console.log('websocket服务器连接已关闭');
+            clearTimeout(this.heartTimeer);
             this.state = 'close';
             this.event.emit('close');
-            event.code === 1006 && this.reconnect();
+            if (event.code === 1006 || event.code === 1011) {
+                this.reconnect();
+                return;
+            }
+            removeToken();
+            if (router.currentRoute.name !== routerName.LOGIN)
+                router.push({ name: routerName.LOGIN });
         }
         this.ws.onerror = () => {
+            console.log('websocket服务器连接发生错误');
+            clearTimeout(this.heartTimeer);
             this.state = 'error';
             this.event.emit('error');
             this.reconnect();
         }
+        this.heartTimeer = setInterval(() => {
+            this.heartPing();
+        }, 30000);
     },
     send(data) {
         if (this.state === 'close') return;
@@ -54,10 +70,15 @@ const websocketInstance = {
                 this.init();
             }, 5000);
         }
+    },
+
+    heartPing() {
+        this.send({
+            code: code.heartPing.code,
+            data: 'hartPing'
+        })
     }
 }
-
-heartPing(websocketInstance);
 
 checkUser(websocketInstance);
 

@@ -11,7 +11,7 @@ export default {
   name: 'App',
   created() {
     let token = getToken();
-    if (token) {
+    if (token.login) {
       websocketInstance.init();
     }
   }
