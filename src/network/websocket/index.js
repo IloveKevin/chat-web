@@ -4,6 +4,7 @@ import { getToken, removeToken } from "@/local";
 import code from "@/common/code";
 import router from "@/router";
 import routerName from "@/common/router-name";
+import config from "@/config";
 
 const websocketInstance = {
     state: 'close',
@@ -13,7 +14,7 @@ const websocketInstance = {
     heartTimeer: null,
     init() {
         console.log('连接websocket服务器');
-        this.ws = new WebSocket("ws://localhost:8080");
+        this.ws = new WebSocket(`ws://localhost:${config.webSocketServer.port}}`);
         this.ws.onopen = () => {
             this.state = 'open';
             this.event.emit('open');
@@ -52,7 +53,7 @@ const websocketInstance = {
         }
         this.heartTimeer = setInterval(() => {
             this.heartPing();
-        }, 30000);
+        }, config.webSocketServer.heartTime);
     },
     send(data) {
         if (this.state === 'close') return;
@@ -68,7 +69,7 @@ const websocketInstance = {
         if (this.state !== 'open') {
             this.timer = setTimeout(() => {
                 this.init();
-            }, 5000);
+            }, config.webSocketServer.reconnectTime);
         }
     },
 
