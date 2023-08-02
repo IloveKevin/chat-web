@@ -36,7 +36,7 @@
                         <button @click="isLogin = true">切换登录</button>
                     </div>
                     <div class="overlay-panel overlay-panel-right my-flex">
-                        <h1>欢迎登陆</h1>
+                        <h1>欢迎登陆{{ token }}</h1>
                         <button @click="isLogin = false">切换注册</button>
                     </div>
                 </div>
@@ -45,7 +45,9 @@
     </div>
 </template>
 <script>
-import { login, register } from '../network/http'
+import { login, register } from '../network/http';
+import { mapState, mapMutations } from 'vuex';
+import routerName from '@/common/router-name';
 export default {
     name: 'login-1',
     components: {
@@ -69,6 +71,9 @@ export default {
         }
     },
     computed: {
+        ...mapState({
+            token: state => state.token
+        }),
         getIsLogin() {
             return this.isLogin;
         }
@@ -80,9 +85,15 @@ export default {
 
     },
     methods: {
+        ...mapMutations(['setToken']),
         toLogin() {
             login({ account: this.loginData.username, password: this.loginData.password }).then(res => {
-                console.log(res);
+                const token = {
+                    login: res.token,
+                    refresh: res.refreshToken
+                }
+                this.setToken(token);
+                this.$router.push({ name: routerName.HOME });
             });
         },
         toRegister() {
