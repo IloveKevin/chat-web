@@ -14,7 +14,7 @@ const websocketInstance = {
     heartTimeer: null,
     init() {
         console.log('连接websocket服务器');
-        this.ws = new WebSocket(`ws://localhost:${config.webSocketServer.port}}`);
+        this.ws = new WebSocket(`ws://localhost:${config.webSocketServer.port}`);
         this.ws.onopen = () => {
             this.state = 'open';
             this.event.emit('open');

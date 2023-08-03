@@ -5,7 +5,7 @@ import router from "@/router";
 
 export default ws => {
     ws.event.on(code.checkUser.code, (message) => {
-        if (message.state === code.checkUser.state.fail) {
+        if (message.state === code.checkUser.state.fail || message.state === code.checkUser.state.kick) {
             removeToken();
             return;
         }
