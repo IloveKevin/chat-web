@@ -83,21 +83,20 @@ export default {
     },
     methods: {
         ...mapMutations(['setToken']),
-        toLogin() {
-            login({ account: this.loginData.username, password: this.loginData.password }).then(res => {
-                if (res.code != 0) return;
-                const token = {
-                    login: res.token,
-                    refresh: res.refreshToken
-                }
-                this.setToken(token);
-                websocketInstance.init();
-            });
+        async toLogin() {
+            const res = await login({ account: this.loginData.username, password: this.loginData.password });
+            if (res.code != 0) return this.$myNotice({ title: '登录失败', message: res.message, type: 'error' });
+            const token = {
+                login: res.token,
+                refresh: res.refreshToken
+            }
+            this.setToken(token);
+            websocketInstance.init();
         },
-        toRegister() {
-            register({ account: this.registerData.username, password: this.registerData.password }).then(res => {
-                console.log(res);
-            });
+        async toRegister() {
+            let res = await register({ account: this.registerData.username, password: this.registerData.password });
+            if (res.code != 0) return this.$myNotice({ title: '注册失败', message: res.message, type: 'error' });
+            this.$myNotice({ title: '注册成功', message: '请登录', type: 'success' });
         }
     }
 }

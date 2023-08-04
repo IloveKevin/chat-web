@@ -40,16 +40,16 @@ const friend = {
     actions: {
         //获取好友列表
         getFriendList({ commit }) {
-            websocketInstance.send({ code: code.getFriendList.code });
-            websocketInstance.event.once(code.getFriendList.code, (data) => {
+            websocketInstance.send({ code: code.getFriendListRequest.code });
+            websocketInstance.event.once(code.getFriendListRequest.code, (data) => {
                 commit('setFriendList', data.data);
             });
         },
 
         //获取添加好友列表
         getAddFriendList({ commit }) {
-            websocketInstance.send({ code: code.getAddFriendList.code });
-            websocketInstance.event.once(code.getAddFriendList.code, (data) => {
+            websocketInstance.send({ code: code.getAddFriendListRequest.code });
+            websocketInstance.event.once(code.getAddFriendListRequest.code, (data) => {
                 commit('setAddFriendList', data.data);
             }
             );

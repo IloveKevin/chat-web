@@ -20,7 +20,7 @@ const websocketInstance = {
             this.event.emit('open');
             let token = getToken();
             this.send({
-                code: code.checkUser.code,
+                code: code.checkUserRequest.code,
                 data: {
                     token: token.login,
                     refreshToken: token.refresh
@@ -75,7 +75,7 @@ const websocketInstance = {
 
     heartPing() {
         this.send({
-            code: code.heartPing.code,
+            code: code.heartPingRequest.code,
             data: 'hartPing'
         })
     }

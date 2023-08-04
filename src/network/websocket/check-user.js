@@ -4,8 +4,8 @@ import router from "@/router";
 import store from "@/store";
 
 export default ws => {
-    ws.event.on(code.checkUser.code, (message) => {
-        if (message.state === code.checkUser.state.fail || message.state === code.checkUser.state.kick) {
+    ws.event.on(code.checkUserRequest.code, (message) => {
+        if (message.state === code.checkUserRequest.state.fail || message.state === code.checkUserRequest.state.kick) {
             store.commit('removeToken');
             return;
         }
@@ -16,5 +16,6 @@ export default ws => {
         if (token && refreshToken)
             store.commit('setToken', { login: token, refresh: refreshToken });
         store.dispatch('getFriendList');
+        store.dispatch('getAddFriendList');
     })
 }
