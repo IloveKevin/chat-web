@@ -31,9 +31,9 @@ export default {
         code: 4,
         state: {
             success: 200,//请求添加成功
-            repeat: 101,//重复添加
+            repeat: 101,//重复发送添加请求
             isFriend: 100,//已经是好友
-            refuse: 102,//对方以及拒绝过添加
+            addSelf: 102,//不能添加自己
         }
     },
     addFriendResponce: {//添加好友响应
@@ -60,7 +60,8 @@ export default {
         code: 9,
         state: {
             success: 200,//处理成功
-            fail: 100,//以及是好友，处理失败
+            fail: 100,//该好友请求不存在
+            isFriend: 101,//已经是好友了
         }
     },
     getAddFriendListRequest: {//获取添加好友列表

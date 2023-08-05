@@ -22,14 +22,20 @@
                 </ul>
             </div>
         </div>
-        <input type="text" placeholder="请输入要添加的用户id" v-model.number="addFriendId">
-        <button @click="addFriend">添加</button>
+        <div>
+            <input type="text" placeholder="请输入要添加的用户id" v-model.number="addFriendId">
+            <button @click="addFriend">添加</button>
+        </div>
+        <div style="margin-top: 20px;">
+            <button @click="logout">退出</button>
+        </div>
     </div>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import websocketInstance from '@/network/websocket';
 import code from '@/common/code';
+import routerName from '@/common/router-name';
 export default {
     name: 'my-home',
     components: {
@@ -58,6 +64,11 @@ export default {
 
     },
     methods: {
+        ...mapMutations([
+            'REMOVE_FRIEND',
+            'REMOVE_ADD_FRIEND',
+            'REMOVE_TOKEN',
+        ]),
         addFriend() {
             if (!this.addFriendId) return;
             websocketInstance.send({
@@ -82,8 +93,8 @@ export default {
                         message = '对方已经是你的好友'
                         type = 'warning'
                         break;
-                    case code.addFriendRequest.state.refuse:
-                        message = '对方已经拒绝过你的好友申请'
+                    case code.addFriendRequest.state.addSelf:
+                        message = '不能添加自己为好友'
                         type = 'warning'
                         break;
                 }
@@ -101,6 +112,26 @@ export default {
                     friendId: id,
                 }
             });
+            websocketInstance.event.once(code.removeFriendRequest.code, data => {
+                let message;
+                let type;
+                switch (data.state) {
+                    case code.removeFriendRequest.state.success:
+                        message = '删除好友成功'
+                        type = 'success'
+                        break;
+                    case code.removeFriendRequest.state.fail:
+                        message = '对方不是你的好友'
+                        type = 'warning'
+                        break;
+                }
+                this.$myNotice({
+                    title: '删除好友',
+                    message,
+                    type,
+                });
+                this.REMOVE_FRIEND(id);
+            })
         },
         handleAddFriend(id, agree) {
             websocketInstance.send({
@@ -110,6 +141,35 @@ export default {
                     agree,
                 }
             });
+            websocketInstance.event.once(code.handleAddFriendRequest.code, data => {
+                let message;
+                let type;
+                switch (data.state) {
+                    case code.handleAddFriendRequest.state.success:
+                        message = '添加好友成功'
+                        type = 'success'
+                        break;
+                    case code.handleAddFriendRequest.state.fail:
+                        message = '添加好友失败,该好友不存在'
+                        type = 'warning'
+                        break;
+                    case code.handleAddFriendRequest.state.isFriend:
+                        message = '对方已经是你的好友'
+                        type = 'warning'
+                        break;
+                }
+                this.$myNotice({
+                    title: '添加好友',
+                    message,
+                    type,
+                });
+                this.REMOVE_ADD_FRIEND(id);
+            })
+        },
+        logout() {
+            this.REMOVE_TOKEN();
+            this.$router.push({ name: routerName.LOGIN });
+            websocketInstance.close();
         }
     }
 };

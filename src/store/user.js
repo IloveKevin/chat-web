@@ -1,27 +1,31 @@
 import { getToken, setToken, removeToken } from "@/local";
 const User = {
     state: {
-        name: '',
+        name: null,
+        id: null,
         token: {
-            login: '',
-            refresh: '',
+            login: null,
+            refresh: null,
         },
     },
     mutations: {
-        setToken(state, token) {
+        SET_TOKEN(state, token) {
             state.token = token;
             setToken(token);
         },
-        removeToken(state) {
+        REMOVE_TOKEN(state) {
             state.token = {
                 login: null,
                 refresh: null,
             }
             removeToken();
         },
-        setName(state, name) {
+        SET_NAME(state, name) {
             state.name = name;
         },
+        SET_ID(state, id) {
+            state.id = id;
+        }
     }
 }
 

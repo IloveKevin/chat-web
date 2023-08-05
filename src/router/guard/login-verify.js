@@ -2,7 +2,7 @@ import { getToken } from "@/local"
 import routerName from "@/common/router-name"
 const loginVerify = (to, from, next) => {
     let token = getToken()
-    if (to.name === routerName.LOGIN && token.login) {
+    if (to.name == routerName.LOGIN && token.login) {
         next(routerName.HOME)
         return
     }

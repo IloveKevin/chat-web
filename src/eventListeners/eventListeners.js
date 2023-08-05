@@ -20,8 +20,8 @@ export default class eventListeners {
     remove(eventName, callback) {
         if (this.event.has(eventName)) {
             const eventList = this.event.get(eventName);
-            const index = eventList.findIndex(item => item === callback);
-            if (index !== -1) {
+            const index = eventList.findIndex(item => item == callback);
+            if (index != -1) {
                 eventList.splice(index, 1);
             }
         }

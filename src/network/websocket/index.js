@@ -1,6 +1,11 @@
 import eventListeners from "@/eventListeners/eventListeners";
 import checkUser from "./check-user";
-import { getToken, removeToken } from "@/local";
+import newAddFriend from "./newAddFriend";
+import addFriendRespone from "./add-friend-responce";
+import friendOnline from "./friend-online";
+import friendOffline from "./friend_offline";
+import removeFriendResponce from "./remove-friend-responce";
+import store from "@/store";
 import code from "@/common/code";
 import router from "@/router";
 import routerName from "@/common/router-name";
@@ -18,7 +23,7 @@ const websocketInstance = {
         this.ws.onopen = () => {
             this.state = 'open';
             this.event.emit('open');
-            let token = getToken();
+            let token = store.state.user.token;
             this.send({
                 code: code.checkUserRequest.code,
                 data: {
@@ -36,12 +41,12 @@ const websocketInstance = {
             clearTimeout(this.heartTimeer);
             this.state = 'close';
             this.event.emit('close');
-            if (event.code === 1006 || event.code === 1011) {
+            if (event.code == 1006 || event.code == 1011) {
                 this.reconnect();
                 return;
             }
-            removeToken();
-            if (router.currentRoute.name !== routerName.LOGIN)
+            store.commit('REMOVE_TOKEN');
+            if (router.currentRoute.name != routerName.LOGIN)
                 router.push({ name: routerName.LOGIN });
         }
         this.ws.onerror = () => {
@@ -56,7 +61,7 @@ const websocketInstance = {
         }, config.webSocketServer.heartTime);
     },
     send(data) {
-        if (this.state === 'close') return;
+        if (this.state == 'close') return;
         this.ws.send(JSON.stringify(data));
     },
     close() {
@@ -66,7 +71,7 @@ const websocketInstance = {
 
     reconnect() {
         clearTimeout(this.timer);
-        if (this.state !== 'open') {
+        if (this.state != 'open') {
             this.timer = setTimeout(() => {
                 this.init();
             }, config.webSocketServer.reconnectTime);
@@ -82,5 +87,11 @@ const websocketInstance = {
 }
 
 checkUser(websocketInstance);
+newAddFriend(websocketInstance);
+addFriendRespone(websocketInstance);
+friendOnline(websocketInstance);
+friendOffline(websocketInstance);
+removeFriendResponce(websocketInstance);
+
 
 export default websocketInstance;

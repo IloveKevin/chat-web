@@ -82,7 +82,7 @@ export default {
 
     },
     methods: {
-        ...mapMutations(['setToken']),
+        ...mapMutations(['SET_TOKEN']),
         async toLogin() {
             const res = await login({ account: this.loginData.username, password: this.loginData.password });
             if (res.code != 0) return this.$myNotice({ title: '登录失败', message: res.message, type: 'error' });
@@ -90,7 +90,7 @@ export default {
                 login: res.token,
                 refresh: res.refreshToken
             }
-            this.setToken(token);
+            this.SET_TOKEN(token);
             websocketInstance.init();
         },
         async toRegister() {
