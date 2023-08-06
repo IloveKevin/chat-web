@@ -1,5 +1,5 @@
 import eventListeners from "@/eventListeners/eventListeners";
-import checkUser from "./check-user";
+// import checkUser from "./check-user";
 import newAddFriend from "./newAddFriend";
 import addFriendRespone from "./add-friend-responce";
 import friendOnline from "./friend-online";
@@ -10,6 +10,7 @@ import code from "@/common/code";
 import router from "@/router";
 import routerName from "@/common/router-name";
 import config from "@/config";
+import { checkUser } from "./we-send";
 
 const websocketInstance = {
     state: 'close',
@@ -23,14 +24,17 @@ const websocketInstance = {
         this.ws.onopen = () => {
             this.state = 'open';
             this.event.emit('open');
-            let token = store.state.user.token;
-            this.send({
-                code: code.checkUserRequest.code,
-                data: {
-                    token: token.login,
-                    refreshToken: token.refresh
-                }
-            })
+            checkUser((code, message) => {
+                console.log(code, message);
+            });
+            // let token = store.state.user.token;
+            // this.send({
+            //     code: code.checkUserRequest.code,
+            //     data: {
+            //         token: token.login,
+            //         refreshToken: token.refresh
+            //     }
+            // })
         }
         this.ws.onmessage = (event) => {
             let data = JSON.parse(event.data);
@@ -86,7 +90,7 @@ const websocketInstance = {
     }
 }
 
-checkUser(websocketInstance);
+// checkUser(websocketInstance);
 newAddFriend(websocketInstance);
 addFriendRespone(websocketInstance);
 friendOnline(websocketInstance);
